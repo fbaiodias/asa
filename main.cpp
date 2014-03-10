@@ -9,19 +9,14 @@ class Person {
     int id;
     vector<int> friends;
   public:
-    Person (int);
+    Person (int i) {id = i;};
     int getId () {return id;}
     void newFriend (int i) {friends.push_back(i);}
-    int getShares(){return friends.size;}
+    int getFriends(){return friends.size();}
     int getFriend(int i){return friends[i];}
 
 };
 
-Person::Person (int i) {
-  id = i;
-}
-
-//vector<int> u,v;
 vector<Person*> people;
 int n,p;
 
@@ -31,7 +26,7 @@ int main () {
   scanf("%u %u", &n,&p);
 
   for(int i=0;i<n;i++) {
-    people.push_back(new Person(i));
+    people.push_back(new Person(i+1));
   }
 
   int pu, pv;
@@ -39,23 +34,17 @@ int main () {
   for(int i=0;i<p;i++) {
     scanf("%u %u", &pu, &pv);
 
-    people[pu]->newFriend(pv);
-    //u.push_back(pu);
-    //v.push_back(pv);
+    people[pu-1]->newFriend(pv);
   }
 
 
   // DEBUG
   for(int i=0;i<n;i++) {
-    cout << "Person " << people[i]->getId() << "\n" << "Partilhas ";
-    for(int j = 0; j<people[i]->getShares(); j++){
-      cout << people->getFriend(j) << " ";
+    cout << "Person " << people[i]->getId() << "\n" << "Shares with ";
+    for(int o=0; o < people[i]->getFriends(); o++){
+      cout << people[i]->getFriend(o) << " ";
     }
-    cout << "\n";
-  }
-
-  for(int i=0;i<p;i++) {
-    //cout << "Partilha " << u[i] << " " << v[i] << "\n";
+    cout << "\n\n";
   }
 
   return 0;

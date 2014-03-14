@@ -16,7 +16,9 @@ class Person {
     int getFriends(){return friends.size();}
     int getFriend(int i){return friends[i];}
     bool unvisited() {return (d == -1);}
-    void visit(visited) {d=low=visited;}
+    void visit(int visited) {d=low=visited;}
+    int low() {return low;}
+    void setLow(int newLow) {if(newLow < low) low = newLow;}
 };
 
 vector<Person*> people;
@@ -63,13 +65,16 @@ void tarjanVisit(int i) {
   people[i]->visit();
 
   visited = visited + 1
-  Push(L, u);
-  for each v ∈Adj[u]
-  do if (d[v] = ∞ || v ∈ L)
-  // Ignora vértices de SCCs já identiﬁcados
-  then if d[v] = ∞
-  then Tarjan_Visit(v)
-  low[u] = min(low[u], low[v])
+  stack.push_back(people[i]);
+
+  for(int o=0; o<people[i]->getFriends(); o++) {
+    if (people[people[i]->getFriend[o]]->unvisited()) {
+      // Ignora vértices de SCCs já identiﬁcados
+      tarjanVisit(o)
+      people[i]->setLow(people[people[i]->getFriend[o]]->low())
+    }
+  }
+
   if d[u] = low[u] ✄ Raiz do SCC
   then repeat
   v = Pop(L)

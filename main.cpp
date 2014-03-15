@@ -15,14 +15,15 @@ class Person {
     void newFriend (int i) {friends.push_back(i);}
     int getFriends(){return friends.size();}
     int getFriend(int i){return friends[i];}
-    bool unvisited() {return (d == -1);}
+    bool isUnvisited() {return (d == -1);}
+    bool isRoot() {return (d == low);}
     void visit(int visited) {d=low=visited;}
     int low() {return low;}
     void setLow(int newLow) {if(newLow < low) low = newLow;}
 };
 
 vector<Person*> people;
-vector<Person*> stack;
+vector<int> stack;
 int n,p;
 int visited = 0, L = 0;
 
@@ -44,7 +45,7 @@ int main () {
   }
 
   for(int i=0;i<n;i++) {
-    if(people[i]->unvisited()){
+    if(people[i]->isUnvisited()){
       tarjanVisit(i);
     }
   }
@@ -61,23 +62,25 @@ int main () {
   return 0;
 }
 
-void tarjanVisit(int i) {
-  people[i]->visit();
+void tarjanVisit(int u) {
+  people[u]->visit();
 
   visited = visited + 1
-  stack.push_back(people[i]);
+  stack.push_back(u);
 
-  for(int o=0; o<people[i]->getFriends(); o++) {
-    if (people[people[i]->getFriend[o]]->unvisited()) {
+  for(int v=0; v<people[u]->getFriends(); v++) {
+    if (people[people[u]->getFriend[v]]->isUnvisited()) {
       // Ignora vértices de SCCs já identiﬁcados
-      tarjanVisit(o)
-      people[i]->setLow(people[people[i]->getFriend[o]]->low())
+      tarjanVisit(v);
+      people[u]->setLow(people[people[u]->getFriend[v]]->low());
     }
   }
 
-  if d[u] = low[u] ✄ Raiz do SCC
-  then repeat
-  v = Pop(L)
-  // Vértices retirados deﬁnem SCC
-until u = v
+  int v;
+  if(people[u]->isRoot()) {
+    while(u != v) {
+      // Vértices retirados deﬁnem SCC
+      v = stack.pop();
+    }
+  }
 }

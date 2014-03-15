@@ -18,7 +18,7 @@ class Person {
     bool isUnvisited() {return (d == -1);}
     bool isRoot() {return (d == low);}
     void visit(int visited) {d=low=visited;}
-    int low() {return low;}
+    int getLow() {return low;}
     void setLow(int newLow) {if(newLow < low) low = newLow;}
 };
 
@@ -27,6 +27,30 @@ vector<int> stack;
 int n,p;
 int visited = 0, L = 0;
 
+void tarjanVisit(int u) {
+  people[u]->visit(visited);
+
+  visited = visited + 1;
+  stack.push_back(u);
+
+  for(int v=0; v<people[u]->getFriends(); v++) {
+    if (people[people[u]->getFriend(v)]->isUnvisited()) {
+      // Ignora vértices de SCCs já identiﬁcados
+      tarjanVisit(v);
+      people[u]->setLow(people[people[u]->getFriend(v)]->getLow());
+    }
+  }
+
+  int v = stack.back();
+  stack.pop_back();
+  if(people[u]->isRoot()) {
+    while(u != v) {
+      // Vértices retirados deﬁnem SCC
+      v = stack.back();
+      stack.pop_back();
+    }
+  }
+}
 
 
 int main () {
@@ -60,27 +84,4 @@ int main () {
   }
 
   return 0;
-}
-
-void tarjanVisit(int u) {
-  people[u]->visit();
-
-  visited = visited + 1;
-  stack.push_back(u);
-
-  for(int v=0; v<people[u]->getFriends(); v++) {
-    if (people[people[u]->getFriend[v]]->isUnvisited()) {
-      // Ignora vértices de SCCs já identiﬁcados
-      tarjanVisit(v);
-      people[u]->setLow(people[people[u]->getFriend[v]]->low());
-    }
-  }
-
-  int v;
-  if(people[u]->isRoot()) {
-    while(u != v) {
-      // Vértices retirados deﬁnem SCC
-      v = stack.pop();
-    }
-  }
 }

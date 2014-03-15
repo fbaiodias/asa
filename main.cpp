@@ -65,7 +65,7 @@ int main () {
 void tarjanVisit(int u) {
   people[u]->visit();
 
-  visited = visited + 1
+  visited = visited + 1;
   stack.push_back(u);
 
   for(int v=0; v<people[u]->getFriends(); v++) {

@@ -33,11 +33,12 @@ void tarjanVisit(int u) {
   visited = visited + 1;
   stack.push_back(u);
 
-  for(int v=0; v<people[u]->getFriends(); v++) {
-    if (people[people[u]->getFriend(v)]->isUnvisited()) {
+  for(int i=0; i<people[u]->getFriends(); i++) {
+    int v = people[u]->getFriend(i)-1;
+    if (people[v]->isUnvisited()) {
       // Ignora vértices de SCCs já identiﬁcados
       tarjanVisit(v);
-      people[u]->setLow(people[people[u]->getFriend(v)]->getLow());
+      people[u]->setLow(people[v]->getLow());
     }
   }
 
@@ -50,6 +51,7 @@ void tarjanVisit(int u) {
       stack.pop_back();
     }
   }
+  
 }
 
 

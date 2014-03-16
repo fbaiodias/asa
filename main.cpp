@@ -10,6 +10,7 @@ class Person {
     int d, low;
     vector<int> friends;
     bool imstacked=false;
+    bool imstackedF=false;
   public:
     Person (int i) {id = i; d=-1;};
     int getId () {return id;}
@@ -21,9 +22,13 @@ class Person {
     void visit(int visited) {d=low=visited;}
     int getLow() {return low;}
     void setLow(int newLow) {if(newLow < low) low = newLow;}
-    bool imOnStack(){return imstacked;}
+    bool isOnStack(){return imstacked;}
     void enterStack(){imstacked=true;}
     void exitStack(){imstacked=false;}
+
+    bool isOnStackF(){return imstackedF;}
+    void enterStackF(){imstackedF=true;}
+    void exitStackF(){imstackedF=false;}
 };
 
 vector<Person*> people;
@@ -35,8 +40,9 @@ int maxSCCSize = 0;
 int privateSCCs = 0;
 
 bool isPrivate(int n){
+	int l = people[n]->getLow();
     for(int i = 0; i < people[n]->getFriends(); i++){
-    	if(people[n]->getLow() != people[people[n]->getFriend(i)-1]->getLow()){return false;}
+    	if(l != people[people[n]->getFriend(i)-1]->getLow()){return false;}
     }
     return true;
 }
@@ -50,7 +56,7 @@ void tarjanVisit(int u) {
 
   for(int i=0; i < people[u]->getFriends(); i++) {
     int v = people[u]->getFriend(i)-1;
-    if (people[v]->isUnvisited() || people[v+1]->imOnStack() /*std::find(stack.begin(), stack.end(), (v+1))!=stack.end()*/) {
+    if (people[v]->isUnvisited() || people[v]->isOnStack() /*std::find(stack.begin(), stack.end(), (v+1))!=stack.end()*/) {
       if (people[v]->isUnvisited()) {
         // Ignora vértices de SCCs já identiﬁcados
         tarjanVisit(v);
@@ -61,25 +67,37 @@ void tarjanVisit(int u) {
   }
 
   if(people[u]->isRoot()) {
+  	vector<int> friends;
     u=u+1;
-    int SCCSize = 1;
-    bool envy = false;
-    int v = stack.back();
-    stack.pop_back();
-    people[v-1]->exitStack();
-    if(isPrivate(v-1)) envy = true;
-    //cout << "SCC U: " << u << " V: " << v << " ";
+    int SCCSize = 0;
+    //bool envy = false;
+    int v = -1;
+
     while(u != v) {
       // Vértices retirados deﬁnem SCC
       v = stack.back();
       stack.pop_back();
       people[v-1]->exitStack();
-      if(isPrivate(v-1)) envy = true;
+      //if(isPrivate(v-1)) envy = true;
       //cout << v << " ";
       SCCSize=SCCSize+1;
+
+      for(int i = 0; i< people[v-1]->getFriends();i++){
+      	if(!people[people[v-1]->getFriend(i)-1]->isOnStackF()){
+      		friends.push_back(v-1); 
+      		people[people[v-1]->getFriend(i)-1]->enterStackF();
+      	}
+      }
     }
-    //cout << "\n";
-    if(envy) privateSCCs = privateSCCs+1;
+
+	for(int i = 0; i< friends.size();i++){
+		if(people[friends[i]]->isOnStackF()){
+			people[friends[i]]->exitStackF();
+		}
+	}
+    if(SCCSize=friends.size()) privateSCCs = privateSCCs + 1;
+       //cout << "\n";
+    //if(envy) privateSCCs = privateSCCs+1;
     numberOfSCCs = numberOfSCCs+1;
     if(SCCSize>maxSCCSize) maxSCCSize=SCCSize;
   }

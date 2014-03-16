@@ -26,32 +26,49 @@ vector<Person*> people;
 vector<int> stack;
 int n,p;
 int visited = 0, L = 0;
+int numberOfSCCs = 0;
+int maxSCCSize = 0;
 
 void tarjanVisit(int u) {
+  //cout << "Visiting " << u+1 << "\n";
   people[u]->visit(visited);
 
   visited = visited + 1;
-  stack.push_back(u);
+  stack.push_back(u+1);
 
-  for(int i=0; i<people[u]->getFriends(); i++) {
+  for(int i=0; i < people[u]->getFriends(); i++) {
     int v = people[u]->getFriend(i)-1;
-    if (people[v]->isUnvisited()) {
-      // Ignora vértices de SCCs já identiﬁcados
-      tarjanVisit(v);
+    if (people[v]->isUnvisited() || find(stack.begin(), stack.end(), v+1)!=stack.end()) {
+      if (people[v]->isUnvisited()) {
+        // Ignora vértices de SCCs já identiﬁcados
+        tarjanVisit(v);
+      }
       people[u]->setLow(people[v]->getLow());
     }
+
   }
 
-  int v = stack.back();
-  stack.pop_back();
   if(people[u]->isRoot()) {
+    u=u+1;
+    int SCCSize = 1;
+    int v = stack.back();
+    stack.pop_back();
+
+    //cout << "SCC U: " << u << " V: " << v << " ";
     while(u != v) {
       // Vértices retirados deﬁnem SCC
       v = stack.back();
       stack.pop_back();
+      //cout << v << " ";
+      SCCSize=SCCSize+1;
     }
+    //cout << "\n";
+
+    numberOfSCCs = numberOfSCCs+1;
+    if(SCCSize>maxSCCSize) maxSCCSize=SCCSize;
   }
-  
+
+
 }
 
 
@@ -77,6 +94,7 @@ int main () {
   }
 
   // DEBUG
+  /*
   for(int i=0;i<n;i++) {
     cout << "Person " << people[i]->getId() << "\n" << "Shares with ";
     for(int o=0; o < people[i]->getFriends(); o++){
@@ -84,6 +102,12 @@ int main () {
     }
     cout << "\n\n";
   }
+  */
+
+  // OUTPUT
+  cout << numberOfSCCs << "\n";
+  cout << maxSCCSize << "\n";
+
 
   return 0;
 }

@@ -9,10 +9,10 @@ class Person {
     int id;
     int d, low;
     vector<int> friends;
-    bool imstacked=false;
-    bool imstackedF=false;
+    bool imstacked;
+    bool imstackedF;
   public:
-    Person (int i) {id = i; d=-1;};
+    Person (int i) {id = i; d=-1; imstacked=false; imstackedF=false;};
     int getId () {return id;}
     void newFriend (int i) {friends.push_back(i);}
     int getFriends(){return friends.size();}
@@ -38,6 +38,7 @@ int visited = 0, L = 0;
 int numberOfSCCs = 0;
 int maxSCCSize = 0;
 int privateSCCs = 0;
+int garbage = 0;
 
 bool isPrivate(int n){
 	int l = people[n]->getLow();
@@ -82,20 +83,23 @@ void tarjanVisit(int u) {
       //cout << v << " ";
       SCCSize=SCCSize+1;
 
+      if(!people[v-1]->isOnStackF()){
+      		friends.push_back(v-1); 
+      		people[v-1]->enterStackF();
+      }
+      //if(people[v-1]->getFriends() == 0){friends.push_back(v-1);}
       for(int i = 0; i< people[v-1]->getFriends();i++){
       	if(!people[people[v-1]->getFriend(i)-1]->isOnStackF()){
-      		friends.push_back(v-1); 
+      		friends.push_back(people[v-1]->getFriend(i)-1); 
       		people[people[v-1]->getFriend(i)-1]->enterStackF();
       	}
       }
     }
-
-	for(int i = 0; i< friends.size();i++){
-		if(people[friends[i]]->isOnStackF()){
-			people[friends[i]]->exitStackF();
-		}
+    int friendSize = friends.size();
+	for(int i = 0; i< friendSize;i++){
+		people[friends[i]]->exitStackF();
 	}
-    if(SCCSize=friends.size()) privateSCCs = privateSCCs + 1;
+    if(SCCSize==friendSize) privateSCCs = privateSCCs + 1;
        //cout << "\n";
     //if(envy) privateSCCs = privateSCCs+1;
     numberOfSCCs = numberOfSCCs+1;
@@ -107,8 +111,7 @@ void tarjanVisit(int u) {
 
 
 int main () {
-
-  scanf("%u %u", &n,&p);
+  garbage = scanf("%u %u", &n,&p);
 
   for(int i=0;i<n;i++) {
     people.push_back(new Person(i+1));
@@ -116,7 +119,7 @@ int main () {
 
   int pu, pv;
   for(int i=0;i<p;i++) {
-    scanf("%u %u", &pu, &pv);
+    garbage = scanf("%u %u", &pu, &pv);
 
     people[pu-1]->newFriend(pv);
   }

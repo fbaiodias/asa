@@ -59,7 +59,7 @@ void tarjanVisit(int u) {
   }
 
   if(people[u]->isRoot()) {
-  	vector<int> friends;
+    vector<int> friends;
     u=u+1;
     int SCCSize = 0, v = -1, tempPerson;
 

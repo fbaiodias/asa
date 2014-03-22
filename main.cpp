@@ -71,21 +71,21 @@ void tarjanVisit(int u) {
       SCCSize=SCCSize+1;
 
       if(!people[v-1]->isOnStackF()){
-      		friends.push_back(v-1); 
-      		people[v-1]->enterStackF();
+      	friends.push_back(v-1); 
+      	people[v-1]->enterStackF();
       }
       for(int i = 0; i< people[v-1]->getFriends();i++){
         tempPerson = people[v-1]->getFriend(i)-1;
       	if(!people[tempPerson]->isOnStackF()){
-      		friends.push_back(tempPerson); 
-      		people[tempPerson]->enterStackF();
+      	  friends.push_back(tempPerson); 
+      	  people[tempPerson]->enterStackF();
       	}
       }
     }
 
     int friendSize = friends.size();
   	for(int i = 0; i< friendSize;i++){
-  		people[friends[i]]->exitStackF();
+  	  people[friends[i]]->exitStackF();
   	}
     if(SCCSize==friendSize) privateSCCs = privateSCCs + 1;
     numberOfSCCs = numberOfSCCs+1;

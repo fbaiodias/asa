@@ -72,4 +72,4 @@ Examples
 
 ===
 
-README by @manuelalves - https://github.com/manuelalves/asa-problem1/
+README by [manuelalves](https://github.com/manuelalves) - https://github.com/manuelalves/asa-problem1/

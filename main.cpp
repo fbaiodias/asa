@@ -84,9 +84,9 @@ void tarjanVisit(int u) {
     }
 
     int friendSize = friends.size();
-  	for(int i = 0; i< friendSize;i++){
-  	  people[friends[i]]->exitStackF();
-  	}
+    for(int i = 0; i< friendSize;i++){
+      people[friends[i]]->exitStackF();
+    }
     if(SCCSize==friendSize) privateSCCs = privateSCCs + 1;
     numberOfSCCs = numberOfSCCs+1;
     if(SCCSize>maxSCCSize) maxSCCSize=SCCSize;

@@ -7,14 +7,12 @@ using namespace std;
 
 /*----------- Person ------------*/
 class Person {
-    int id;
     int d, low;
     vector<int> friends;
     bool imstacked;
     bool imstackedF;
   public:
-    Person (int i) {id = i; d=-1; imstacked=false; imstackedF=false;};
-    int getId () {return id;}
+    Person () {d=-1; imstacked=false; imstackedF=false;};
     void newFriend (int i) {friends.push_back(i);}
     int getFriends(){return friends.size();}
     int getFriend(int i){return friends[i];}
@@ -35,7 +33,7 @@ class Person {
 vector<Person*> people;
 vector<int> stack;
 int n,p;
-int visited = 0, L = 0;
+int visited = 0;
 int numberOfSCCs = 0;
 int maxSCCSize = 0;
 int privateSCCs = 0;
@@ -61,7 +59,7 @@ void tarjanVisit(int u) {
   }
 
   if(people[u]->isRoot()) {
-  	vector<int> friends;
+    vector<int> friends;
     u=u+1;
     int SCCSize = 0, v = -1, tempPerson;
 
@@ -73,22 +71,22 @@ void tarjanVisit(int u) {
       SCCSize=SCCSize+1;
 
       if(!people[v-1]->isOnStackF()){
-      		friends.push_back(v-1); 
-      		people[v-1]->enterStackF();
+      	friends.push_back(v-1); 
+      	people[v-1]->enterStackF();
       }
       for(int i = 0; i< people[v-1]->getFriends();i++){
         tempPerson = people[v-1]->getFriend(i)-1;
       	if(!people[tempPerson]->isOnStackF()){
-      		friends.push_back(tempPerson); 
-      		people[tempPerson]->enterStackF();
+      	  friends.push_back(tempPerson); 
+      	  people[tempPerson]->enterStackF();
       	}
       }
     }
 
     int friendSize = friends.size();
-  	for(int i = 0; i< friendSize;i++){
-  		people[friends[i]]->exitStackF();
-  	}
+    for(int i = 0; i< friendSize;i++){
+      people[friends[i]]->exitStackF();
+    }
     if(SCCSize==friendSize) privateSCCs = privateSCCs + 1;
     numberOfSCCs = numberOfSCCs+1;
     if(SCCSize>maxSCCSize) maxSCCSize=SCCSize;
@@ -100,7 +98,7 @@ int main () {
   garbage = scanf("%u %u", &n,&p);
 
   for(int i=0;i<n;i++) {
-    people.push_back(new Person(i+1));
+    people.push_back(new Person());
   }
 
   int pu, pv;
@@ -115,17 +113,6 @@ int main () {
       tarjanVisit(i);
     }
   }
-
-  // DEBUG
-  /*
-  for(int i=0;i<n;i++) {
-    cout << "Person " << people[i]->getId() << "\n" << "Shares with ";
-    for(int o=0; o < people[i]->getFriends(); o++){
-      cout << people[i]->getFriend(o) << " ";
-    }
-    cout << "\n\n";
-  }
-  */
 
   // OUTPUT
   cout << numberOfSCCs << "\n";

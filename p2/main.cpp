@@ -9,21 +9,25 @@ using namespace std;
 /*----------- Classes ------------*/
 class Point {
     vector<int> connects;
+    vector<int> flux;
     int color; // 0 is white; 1 is black; 2 is gray;
     int time;
     int father;
+    int fatherPosition;
   public:
-    Point () {};
-    void newConnect (int i) {connects.push_back(i); color = 0; time = -1; father = -1;}
+    Point () {color = 0; time = -1; father = -1;};
+    void newConnect (int i) {connects.push_back(i); flux.push_back(0);}
     int getConnectsSize(){return connects.size();}
     int getConnect(int i){return connects[i];}
-    
     int getColor(){return color;}
     int getTime(){return time;}
     int getFather(){return father;}
+    int getFatherPos(){return fatherPosition;}
+    int getFlux(int i){return flux[i];}
     void setColor(int c){color = c;}
-    void setFather(int i){father = i;}
+    void setFather(int i, int pos){father = i; fatherPosition = pos;}
     void setTime(int i){time = i;}
+    void setFlux(int i){flux[i]=1;}
 };
 
 class Problem {
@@ -54,34 +58,24 @@ queue<int> stack;
   			if(points[points[u]->getConnect(i)]->getColor()==0){
   				points[points[u]->getConnect(i)]->setColor(2);
   				points[points[u]->getConnect(i)]->setTime(points[u]->getTime()+1);
-  				points[points[u]->getConnect(i)]->setFather(u);
+  				points[points[u]->getConnect(i)]->setFather(u, i);
   				stack.push(points[u]->getConnect(i));
   			}
   		}
   		points[u]->setColor(1);
   	}
   }
-  std::vector<int> pathFinder(int s, int t){
-  	std::vector<int> path;
-  	int j=0;
-  	BFS(s);
-  	u=t;
-  	while(u!=s){
-	  	for(int i=0;i <= points[u]->getConnectsSize; i++){
-	  		if (time > points[points[u]->getConnect[i]]->getTime()){
-	  			path[j] = points[u]->getConnect[i];
-	  		}
-	  	}
-	  	u=path[j++];
-    }
-    return path;
 
-  }
   void FordFulkerson(int s,int t){
-  	std::vector<int> path = pathFinder(s,t);
-  	while(points[t]->getTime()!=-1){
-
-  	}
+    printf("hello?\n");
+  	//while(points[t]->getTime()!=-1){
+        BFS(s);
+        int u = t;
+        while(u != s){
+          points[points[u]->getFather()]->setFlux(points[u]->getFatherPos());
+          u=points[u]->getFather();
+        }
+  	//}
   }
 
 /*----------- Main ------------*/
@@ -134,10 +128,11 @@ int main () {
 
 
   // OUTPUT
-  BFS(0);
+  FordFulkerson(0,1);
   for (int i =0; i<5; i++){
-  	printf("%i: %i\n", i, points[i]->getFather());
-  	printf("   %i\n", points[i]->getTime());
+    for(int j = 0; j < points[i]->getConnectsSize(); j++){
+  	 printf("%i: %i\n", i, points[i]->getFlux(j));
   }
+}
   return 0;
 }

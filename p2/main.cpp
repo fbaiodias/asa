@@ -28,6 +28,7 @@ class Point {
     void setFather(int i, int pos){father = i; fatherPosition = pos;}
     void setTime(int i){time = i;}
     void setFlux(int i){flux[i]=1;}
+    void reset(){color = 0; time = -1; father = -1;};
 };
 
 class Problem {
@@ -54,8 +55,10 @@ queue<int> stack;
   	while (!stack.empty()){
   		int u = stack.front();
   		stack.pop();
-  		for(int i = 0; i <= points[i]->getConnectsSize(); i++){
-  			if(points[points[u]->getConnect(i)]->getColor()==0){
+  		for(int i = 0; i < points[u]->getConnectsSize(); i++){
+  			
+  			if(points[points[u]->getConnect(i)]->getColor()==0 && points[u]->getFlux(i) == 0){
+  				printf("%i-%i: %i\n", u, points[u]->getConnect(i), points[points[u]->getConnect(i)]->getFlux(i));
   				points[points[u]->getConnect(i)]->setColor(2);
   				points[points[u]->getConnect(i)]->setTime(points[u]->getTime()+1);
   				points[points[u]->getConnect(i)]->setFather(u, i);
@@ -68,14 +71,19 @@ queue<int> stack;
 
   void FordFulkerson(int s,int t){
     printf("hello?\n");
-  	//while(points[t]->getTime()!=-1){
-        BFS(s);
-        int u = t;
+    BFS(s);
+    int u;
+  	while(points[t]->getTime()!=-1){
+  		u=t;
         while(u != s){
           points[points[u]->getFather()]->setFlux(points[u]->getFatherPos());
           u=points[u]->getFather();
         }
-  	//}
+        for(int i =0; i< points.size();i++){
+        	points[i]->reset();
+        }
+        BFS(s);
+  	}
   }
 
 /*----------- Main ------------*/
@@ -128,7 +136,7 @@ int main () {
 
 
   // OUTPUT
-  FordFulkerson(0,1);
+  FordFulkerson(1,4);
   for (int i =0; i<5; i++){
     for(int j = 0; j < points[i]->getConnectsSize(); j++){
   	 printf("%i: %i\n", i, points[i]->getFlux(j));

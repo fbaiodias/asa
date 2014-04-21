@@ -28,7 +28,8 @@ class Point {
     void setFather(int i, int pos){father = i; fatherPosition = pos;}
     void setTime(int i){time = i;}
     void setFlux(int i){flux[i]=1;}
-    void reset(){color = 0; time = -1; father = -1;};
+    void reset(){color = 0; time = -1; father = -1;}
+    void totalReset(){reset(); flux = vector<int>(flux.size(), 0); }
 };
 
 class Problem {
@@ -45,6 +46,7 @@ class Problem {
 vector<Point*> points;
 vector<Problem*> problems;
 int n,m,h;
+int minResult, count;
 int garbage = 0;
 queue<int> stack;
 /*----------- Functions ------------*/
@@ -58,7 +60,7 @@ queue<int> stack;
   		for(int i = 0; i < points[u]->getConnectsSize(); i++){
   			
   			if(points[points[u]->getConnect(i)]->getColor()==0 && points[u]->getFlux(i) == 0){
-  				printf("%i-%i: %i\n", u, points[u]->getConnect(i), points[points[u]->getConnect(i)]->getFlux(i));
+  				//printf("%i-%i: %i\n", u, points[u]->getConnect(i), points[points[u]->getConnect(i)]->getFlux(i));
   				points[points[u]->getConnect(i)]->setColor(2);
   				points[points[u]->getConnect(i)]->setTime(points[u]->getTime()+1);
   				points[points[u]->getConnect(i)]->setFather(u, i);
@@ -70,7 +72,6 @@ queue<int> stack;
   }
 
   void FordFulkerson(int s,int t){
-    printf("hello?\n");
     BFS(s);
     int u;
   	while(points[t]->getTime()!=-1){
@@ -79,7 +80,7 @@ queue<int> stack;
           points[points[u]->getFather()]->setFlux(points[u]->getFatherPos());
           u=points[u]->getFather();
         }
-        for(int i =0; i< points.size();i++){
+        for(int i =0; (unsigned)i < points.size();i++){
         	points[i]->reset();
         }
         BFS(s);
@@ -118,7 +119,7 @@ int main () {
   }
 
   // DEBUG
-  for(int i=0;i<n;i++) {
+  /*for(int i=0;i<n;i++) {
     cout << "Point " << i << "\n" << "Connects with ";
     for(int o=0; o < points[i]->getConnectsSize(); o++){
       cout << points[i]->getConnect(o) << " ";
@@ -134,13 +135,51 @@ int main () {
     cout << "\n\n";
   }
 
-
+*/
   // OUTPUT
-  FordFulkerson(1,4);
-  for (int i =0; i<5; i++){
+
+  for(int i = 0; (unsigned)i < problems.size(); i++){
+  	for(int j=0; j < problems[i]->getPointsSize(); j++){
+  		for(int k=j+1; k < problems[i]->getPointsSize();k++){
+  			FordFulkerson(problems[i]->getPoint(j),problems[i]->getPoint(k));
+  			count = 0;
+			for (int o =0; o<n; o++){
+			   if(points[o]->getTime()!=-1){
+			   		for(int b = 0; b < points[o]->getConnectsSize(); b++){
+			   			int u = points[o]->getConnect(b);
+			   			if(points[u]->getTime() == -1) count++;
+			   		}
+				}
+			}
+			if(k== j+1) minResult = count;
+			if(minResult > count) minResult = count;
+  		}
+  		
+  	}
+  	printf("%i\n", minResult);
+  	for(int i =0; (unsigned)i < points.size();i++){
+        	points[i]->totalReset();
+    }
+
+  }
+  
+
+
+  //FordFulkerson(0,1);
+  /*for (int i =0; i<5; i++){
     for(int j = 0; j < points[i]->getConnectsSize(); j++){
   	 printf("%i: %i\n", i, points[i]->getFlux(j));
   }
-}
+	}
+int count = 0;
+for (int i =0; i<n; i++){
+   if(points[i]->getTime()!=-1){
+   		for(int j = 0; j < points[i]->getConnectsSize(); j++){
+   			int u = points[i]->getConnect(j);
+   			if(points[u]->getTime() == -1) count++;
+   		}
+   }
+ }*/
+ //printf("%i\n", minResult);
   return 0;
 }
